@@ -3,8 +3,18 @@ import datetime
 import requests
 import pandas as pd
 import json
+import logging
+
+logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'utils.log')
+logger = logging.getLogger('utils')
+console_handler = logging.FileHandler(logs_dir,  mode='w', encoding='utf-8')
+console_formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(lineno)d: %(message)s')
+console_handler.setFormatter(console_formatter)
+logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
 
 def get_greating_client():
+    logger.info('Приветствие')
     need_dict = {}
     #date_obj = datetime.datetime.now().replace(microsecond=0)
     new_date = datetime.datetime.now().replace(microsecond=0).strftime("%H")
@@ -22,11 +32,13 @@ def get_greating_client():
 
 
 def get_json_with_data(path_to_file):
+    logger.info('Чтение excel файла')
     ex_data = pd.read_excel(path_to_file)
     return ex_data
 
 
 def get_often_operations(data):
+    logger.info('Вычисление самых частых операций')
     data_ex = data.to_dict(orient="records")
     need_list = []
     list_with_operations = []
@@ -55,7 +67,9 @@ def get_often_operations(data):
         #groupby + агрегация
         i += 1
     return list_with_operations
+
 def get_top_five(data):
+    logger.info('Вычисление топ пяти операций')
     ex_data = data
     sort_ex_data = ex_data.sort_values('Сумма платежа')
     sort_dict_data = sort_ex_data.to_dict(orient="records")
@@ -78,6 +92,7 @@ def get_top_five(data):
     return list_top_five
 
 def get_convert(transactions) :
+    logger.info('Вычисление курса валют')
     url = "https://api.apilayer.com/exchangerates_data/latest"
     list_params = transactions
     currency_list =[]
@@ -96,7 +111,9 @@ def get_convert(transactions) :
         currency_dict['rate'] = result["rates"]['RUB']
         currency_list.append(currency_dict)
     return currency_list
+
 def get_papirus(transactions) :
+    logger.info('Вычисление курса акций')
     list_papirus = []
     my_api_key = "d25o9o9r01qhge4dj7e0d25o9o9r01qhge4dj7eg"
     list_params = transactions
@@ -111,7 +128,9 @@ def get_papirus(transactions) :
         list_papirus.append(papirus_dict)
     return list_papirus
 file_with_date_user = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_settings.json')
+
 def get_user_settings(path_on_user):
+    logger.info('Чтение пользовательский настроек')
     with open(path_on_user, 'r', encoding='utf-8') as file:
         user_json = json.load(file)
         return user_json

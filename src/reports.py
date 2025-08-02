@@ -3,13 +3,21 @@ import json
 import datetime
 import os
 from functools import wraps
+import logging
 
-from pandas.core.computation.common import result_type_many
+logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'reports.log')
+logger = logging.getLogger('reports')
+console_handler = logging.FileHandler(logs_dir,  mode='w', encoding='utf-8')
+console_formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(lineno)d: %(message)s')
+console_handler.setFormatter(console_formatter)
+logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
 
 file_with_date = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'operations.xlsx')
 print(file_with_date)
 
 def report_to_file(filename):
+    logger.info('Запись отчёта')
     def wrapper(func_category):
         @wraps(func_category)
         def inner(*args, **kwargs):
@@ -28,6 +36,7 @@ def report_to_file(filename):
 def spending_by_category(transactions: pd.DataFrame,
                          category: str,
                          date= None) -> pd.DataFrame:
+    logger.info('Составление отчёта по категории и дате')
     if date == None:
         date_dt = datetime.datetime.now().replace(microsecond=0)
     else:
