@@ -4,10 +4,10 @@ import requests
 import pandas as pd
 import json
 
-def get_greating_client(date):
+def get_greating_client():
     need_dict = {}
-    date_obj = datetime.datetime.now().replace(microsecond=0)
-    new_date = date_obj.strftime("%H")
+    #date_obj = datetime.datetime.now().replace(microsecond=0)
+    new_date = datetime.datetime.now().replace(microsecond=0).strftime("%H")
     hello_message = ""
     if 0 <= int(new_date) <= 5:
         hello_message = "Доброй ночи"
@@ -23,19 +23,14 @@ def get_greating_client(date):
 
 def get_json_with_data(path_to_file):
     ex_data = pd.read_excel(path_to_file)
-
-    dict_data = ex_data.to_dict(orient="records")
     return ex_data
+
+
 def get_often_operations(data):
     data_ex = data.to_dict(orient="records")
-    need_dict = {}
     need_list = []
-    msmsms = []
+    list_with_operations = []
     numberd = 0
-    klmv = 0
-    njh =0
-    period_day = 'Добрый день'
-    need_dict['greeting'] = period_day
     for data in data_ex:
         if pd.isna(data.get('Номер карты')):
             numberd += 1
@@ -56,10 +51,10 @@ def get_often_operations(data):
         need_dict_l['last_digit'] = need_list[i]
         need_dict_l['total_spent'] = klmv
         need_dict_l['cashback'] = njh
-        msmsms.append(need_dict_l)
+        list_with_operations.append(need_dict_l)
         #groupby + агрегация
         i += 1
-    return msmsms
+    return list_with_operations
 def get_top_five(data):
     ex_data = data
     sort_ex_data = ex_data.sort_values('Сумма платежа')
@@ -107,11 +102,7 @@ def get_papirus(transactions) :
     list_params = transactions
     for param in list_params:
         papirus_dict = {}
-        #d25o9o9r01qhge4dj7e0d25o9o9r01qhge4dj7eg
-        #d25o9o9r01qhge4dj7fg
-        #https: // finnhub.io / api / v1 / quote?symbol = AAPL & token = d25o9o9r01qhge4dj7e0d25o9o9r01qhge4dj7eg
         url = f"https://finnhub.io/api/v1/quote?symbol={param}&token={my_api_key}"
-        #url = f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={param}&interval=1min&apikey={my_api_key}"
         response = requests.get(url)
         data = response.json()
         last_price = data["c"]
@@ -119,7 +110,6 @@ def get_papirus(transactions) :
         papirus_dict['price'] = last_price
         list_papirus.append(papirus_dict)
     return list_papirus
-print(get_papirus(["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]))
 file_with_date_user = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_settings.json')
 def get_user_settings(path_on_user):
     with open(path_on_user, 'r', encoding='utf-8') as file:

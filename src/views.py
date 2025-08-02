@@ -7,7 +7,7 @@ from src.utils import get_greating_client, get_json_with_data, get_often_operati
 
 file_with_date = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'operations.xlsx')
 def get_main_page_info(date):
-    greatings = get_greating_client(date)
+    greatings = get_greating_client()
     all_transactions = get_json_with_data(file_with_date)
     end_period = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     start_period = end_period.replace(day=1, hour=0, minute=0, second=0)
