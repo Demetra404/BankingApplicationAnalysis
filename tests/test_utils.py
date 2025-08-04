@@ -3,7 +3,7 @@ from src.utils import get_greating_client, get_json_with_data, get_often_operati
 import datetime
 
 def test_greating_client():
-    assert get_greating_client() == 'Добрый вечер'
+    assert get_greating_client() == 'Доброе утро'
 
 @patch('requests.get')
 def test_get_convert(mock_get):
