@@ -1,7 +1,5 @@
-
 import json
 import datetime
-from src.views import get_main_page_info
 import pandas as pd
 import os
 import logging
@@ -14,7 +12,10 @@ console_handler.setFormatter(console_formatter)
 logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
+
 def analysys_stonks(data_for_analys, month, year):
+    """Функция для анализа выгодности категорий повышенного кешбэка
+    """
     need_dict = {}
     result_cachback = {}
     number = 0
@@ -31,10 +32,10 @@ def analysys_stonks(data_for_analys, month, year):
                 need_dict[data.get('Категория')] += data.get('Кэшбэк')
             elif data.get('Категория') not in need_dict and date_user in data.get('Дата операции')[:]:
                 need_dict[data.get('Категория')] = data.get('Кэшбэк')
-    sorted_kashback =dict(sorted(need_dict.items(), key = lambda x: x[1], reverse=True ))
+    sorted_cashback = dict(sorted(need_dict.items(), key=lambda x: x[1], reverse=True))
     logger.info('Сортировка по убыванию')
-    for key, value in sorted_kashback.items():
+    for key, value in sorted_cashback.items():
         if value != 0:
             result_cachback[key] = value
-    result_cachback_json = json.dumps(result_cachback, ensure_ascii=False)
-    return result_cachback_json
+    result_cashback_json = json.dumps(result_cachback, ensure_ascii=False)
+    return result_cashback_json

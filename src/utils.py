@@ -1,4 +1,4 @@
-import os.path
+import os
 import datetime
 import requests
 import pandas as pd
@@ -13,10 +13,12 @@ console_handler.setFormatter(console_formatter)
 logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
+
 def get_greating_client():
+    """Функция выводит приветствие в зависимости от времени
+    """
     logger.info('Приветствие')
     need_dict = {}
-    #date_obj = datetime.datetime.now().replace(microsecond=0)
     new_date = datetime.datetime.now().replace(microsecond=0).strftime("%H")
     hello_message = ""
     if 0 <= int(new_date) <= 5:
@@ -32,12 +34,16 @@ def get_greating_client():
 
 
 def get_json_with_data(path_to_file):
+    """Функция для чтения файлов
+    """
     logger.info('Чтение excel файла')
     ex_data = pd.read_excel(path_to_file)
     return ex_data
 
 
 def get_often_operations(data):
+    """Операции по каждой карте
+    """
     logger.info('Вычисление самых частых операций')
     data_ex = data.to_dict(orient="records")
     need_list = []
@@ -49,7 +55,7 @@ def get_often_operations(data):
         elif data.get('Номер карты') not in need_list:
             need_list.append(data.get('Номер карты'))
     i = 0
-    while  i <= len(need_list)-1:
+    while i <= len(need_list) - 1:
         need_dict_l = {}
         njh = 0
         klmv = 0
@@ -68,11 +74,11 @@ def get_often_operations(data):
         i += 1
     return list_with_operations
 
+
 def get_top_five(data):
+    """Функция выдаёт топ пять операций
+    """
     logger.info('Вычисление топ пяти операций')
-    ex_data = data
-    sort_ex_data = ex_data.sort_values('Сумма платежа')
-    sort_dict_data = sort_ex_data.to_dict(orient="records")
     i = 0
     while i < 5:
         i += 1
@@ -91,11 +97,15 @@ def get_top_five(data):
     #отсортировать по колонке сумма операции и вывести 5 штук
     return list_top_five
 
-def get_convert(transactions) :
+
+def get_convert(transactions):
+    """Функция выдаёт заданный курс валют
+    """
+    api_currency = os.getenv('API_KEY_CURRENCY')
     logger.info('Вычисление курса валют')
     url = "https://api.apilayer.com/exchangerates_data/latest"
     list_params = transactions
-    currency_list =[]
+    currency_list = []
     for param in list_params:
         currency_dict = {}
         params = {
@@ -103,7 +113,7 @@ def get_convert(transactions) :
             "symbols": "RUB"
         }
         headers = {
-            "apikey": "GYNhmZneRJ37tTfEGapYORsPyEaUPpm7"
+            "apikey": api_currency
         }
         response = requests.get(url, headers=headers, params=params)
         result = response.json()
@@ -112,14 +122,17 @@ def get_convert(transactions) :
         currency_list.append(currency_dict)
     return currency_list
 
-def get_papirus(transactions) :
+
+def get_papirus(transactions):
+    """Функция выдаёт курс заданных бумаг
+    """
     logger.info('Вычисление курса акций')
     list_papirus = []
-    my_api_key = "d25o9o9r01qhge4dj7e0d25o9o9r01qhge4dj7eg"
+    api_stocks = os.getenv('API_KEY_STOCKS')
     list_params = transactions
     for param in list_params:
         papirus_dict = {}
-        url = f"https://finnhub.io/api/v1/quote?symbol={param}&token={my_api_key}"
+        url = f"https://finnhub.io/api/v1/quote?symbol={param}&token={api_stocks}"
         response = requests.get(url)
         data = response.json()
         last_price = data["c"]
@@ -127,9 +140,11 @@ def get_papirus(transactions) :
         papirus_dict['price'] = last_price
         list_papirus.append(papirus_dict)
     return list_papirus
-file_with_date_user = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_settings.json')
+
 
 def get_user_settings(path_on_user):
+    """Функция считывает пользовательский файл
+    """
     logger.info('Чтение пользовательский настроек')
     with open(path_on_user, 'r', encoding='utf-8') as file:
         user_json = json.load(file)

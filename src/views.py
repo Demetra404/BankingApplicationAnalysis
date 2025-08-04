@@ -1,10 +1,9 @@
-import json
 import os.path
 import datetime
 import logging
-import requests
 import pandas as pd
-from src.utils import get_greating_client, get_json_with_data, get_often_operations, get_top_five, get_user_settings, get_convert, get_papirus
+from src.utils import (get_greating_client, get_json_with_data,
+                       get_often_operations, get_top_five, get_user_settings, get_convert, get_papirus)
 
 logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'views.log')
 logger = logging.getLogger('views')
@@ -15,13 +14,20 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
 file_with_date = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'operations.xlsx')
+
+
 def get_main_page_info(date):
+    """Функция, принимающая на вход строку с датой и временем в формате и возвращающая JSON-ответ
+    """
     greatings = get_greating_client()
     all_transactions = get_json_with_data(file_with_date)
     logger.info('Форматирование периода дат')
     end_period = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     start_period = end_period.replace(day=1, hour=0, minute=0, second=0)
-    selected_transactions = all_transactions[(pd.to_datetime(all_transactions['Дата операции'], dayfirst=True) >= start_period) & (pd.to_datetime(all_transactions['Дата операции'], dayfirst=True) <= end_period)]
+    selected_transactions = all_transactions[(pd.to_datetime(all_transactions['Дата операции'],
+                                                             dayfirst=True) >= start_period)
+                                             & (pd.to_datetime(all_transactions['Дата операции'],
+                                                               dayfirst=True) <= end_period)]
     logger.info('Запись частых операций')
     card_info = get_often_operations(selected_transactions)
     logger.info('Запись топ пяти операций')
@@ -43,6 +49,3 @@ def get_main_page_info(date):
         "stock_prices": user_stocks
     }
     return result
-
-
-
