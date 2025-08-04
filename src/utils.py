@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import json
 import logging
+from dotenv import load_dotenv
 from typing import List, Dict, Any
 
 logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'utils.log')
@@ -13,7 +14,7 @@ console_formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(line
 console_handler.setFormatter(console_formatter)
 logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
-
+load_dotenv()
 
 def get_greating_client():
     """Функция выводит приветствие в зависимости от времени
@@ -58,18 +59,18 @@ def get_often_operations(data: pd.DataFrame) -> List[Dict]:
     i = 0
     while i <= len(need_list) - 1:
         need_dict_l = {}
-        njh = 0
-        klmv = 0
+        cash = 0
+        spend = 0
         for data in data_ex:
             if data.get('Номер карты') == need_list[i]:
-                klmv += data.get('Сумма операции')
+                spend += data.get('Сумма операции')
                 if pd.isna(data.get('Кэшбэк')):
                     numberd += 1
                 elif data.get('Номер карты') == need_list[i]:
-                    njh += data.get('Кэшбэк')
+                    cash += data.get('Кэшбэк')
         need_dict_l['last_digit'] = need_list[i]
-        need_dict_l['total_spent'] = klmv
-        need_dict_l['cashback'] = njh
+        need_dict_l['total_spent'] = spend
+        need_dict_l['cashback'] = cash
         list_with_operations.append(need_dict_l)
         #groupby + агрегация
         i += 1
@@ -103,6 +104,7 @@ def get_convert(transactions: List) -> List[Dict]:
     """Функция выдаёт заданный курс валют
     """
     api_currency = os.getenv('API_KEY_CURRENCY')
+
     logger.info('Вычисление курса валют')
     url = "https://api.apilayer.com/exchangerates_data/latest"
     list_params = transactions
@@ -123,7 +125,6 @@ def get_convert(transactions: List) -> List[Dict]:
         currency_list.append(currency_dict)
     return currency_list
 
-
 def get_papirus(transactions: List) -> List[Dict]:
     """Функция выдаёт курс заданных бумаг
     """
@@ -142,7 +143,7 @@ def get_papirus(transactions: List) -> List[Dict]:
         list_papirus.append(papirus_dict)
     return list_papirus
 
-
+#print(get_papirus(["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]))
 def get_user_settings(path_on_user: str) -> Dict[str, Any]:
     """Функция считывает пользовательский файл
     """
