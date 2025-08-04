@@ -2,6 +2,7 @@ import os.path
 import datetime
 import logging
 import pandas as pd
+from typing import Dict, Any
 from src.utils import (get_greating_client, get_json_with_data,
                        get_often_operations, get_top_five, get_user_settings, get_convert, get_papirus)
 
@@ -16,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 file_with_date = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'operations.xlsx')
 
 
-def get_main_page_info(date):
+def get_main_page_info(date: str) -> Dict[str, Any]:
     """Функция, принимающая на вход строку с датой и временем в формате и возвращающая JSON-ответ
     """
     greatings = get_greating_client()

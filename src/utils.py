@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import json
 import logging
+from typing import List, Dict, Any
 
 logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'utils.log')
 logger = logging.getLogger('utils')
@@ -33,7 +34,7 @@ def get_greating_client():
     return hello_message
 
 
-def get_json_with_data(path_to_file):
+def get_json_with_data(path_to_file: str) -> pd.DataFrame:
     """Функция для чтения файлов
     """
     logger.info('Чтение excel файла')
@@ -41,7 +42,7 @@ def get_json_with_data(path_to_file):
     return ex_data
 
 
-def get_often_operations(data):
+def get_often_operations(data: pd.DataFrame) -> List[Dict]:
     """Операции по каждой карте
     """
     logger.info('Вычисление самых частых операций')
@@ -75,7 +76,7 @@ def get_often_operations(data):
     return list_with_operations
 
 
-def get_top_five(data):
+def get_top_five(data: pd.DataFrame) -> List[Dict]:
     """Функция выдаёт топ пять операций
     """
     logger.info('Вычисление топ пяти операций')
@@ -98,7 +99,7 @@ def get_top_five(data):
     return list_top_five
 
 
-def get_convert(transactions):
+def get_convert(transactions: List) -> List[Dict]:
     """Функция выдаёт заданный курс валют
     """
     api_currency = os.getenv('API_KEY_CURRENCY')
@@ -123,7 +124,7 @@ def get_convert(transactions):
     return currency_list
 
 
-def get_papirus(transactions):
+def get_papirus(transactions: List) -> List[Dict]:
     """Функция выдаёт курс заданных бумаг
     """
     logger.info('Вычисление курса акций')
@@ -142,7 +143,7 @@ def get_papirus(transactions):
     return list_papirus
 
 
-def get_user_settings(path_on_user):
+def get_user_settings(path_on_user: str) -> Dict[str, Any]:
     """Функция считывает пользовательский файл
     """
     logger.info('Чтение пользовательский настроек')

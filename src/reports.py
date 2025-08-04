@@ -3,6 +3,7 @@ import datetime
 import os
 from functools import wraps
 import logging
+from typing import Optional
 
 logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'reports.log')
 logger = logging.getLogger('reports')
@@ -16,7 +17,7 @@ file_with_date = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data'
 print(file_with_date)
 
 
-def report_to_file(filename):
+def report_to_file(filename: str):
     """Декоратор для функций-отчетов, который записывает в файл результат
     """
     logger.info('Запись отчёта')
@@ -37,7 +38,7 @@ def report_to_file(filename):
 
 
 @report_to_file('user_category.json')
-def spending_by_category(transactions, category, date=None):
+def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str]=None) -> pd.DataFrame:
     """Функция возвращает траты по заданной категории за последние три месяца
     """
     logger.info('Составление отчёта по категории и дате')

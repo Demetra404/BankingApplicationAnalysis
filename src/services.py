@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 import os
 import logging
+from typing import Any, Dict, List
 
 logs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'services.log')
 logger = logging.getLogger('services')
@@ -13,7 +14,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
 
-def analysys_stonks(data_for_analys, month, year):
+def analysys_stonks(data_for_analys: List[Dict[str, Any]], month: str, year: str)-> str:
     """Функция для анализа выгодности категорий повышенного кешбэка
     """
     need_dict = {}
